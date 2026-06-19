@@ -1,14 +1,26 @@
 import { CDN_API } from "../utils/constants";
+import { useDispatch } from "react-redux";
+import { setSelectedMovie } from "../Slices/MovieSlice";
 
-const MovieCard = ({ posterPath }) => {
-  if (!posterPath) return null;
+const MovieCard = ({ movie }) => {
+  const dispatch = useDispatch();
 
   return (
-    <div className="min-w-[120px] sm:min-w-[150px] md:min-w-[180px] cursor-pointer transition-transform duration-200 hover:scale-105">
+    <div
+      onClick={() => dispatch(setSelectedMovie(movie))}
+      className="
+        min-w-[150px]
+        md:min-w-[180px]
+        cursor-pointer
+        transition-transform
+        duration-300
+        hover:scale-105
+      "
+    >
       <img
-        className="rounded-md"
-        src={CDN_API + posterPath}
-        alt="movie poster"
+        className="rounded-lg w-full"
+        src={CDN_API + movie.poster_path}
+        alt={movie.title}
       />
     </div>
   );

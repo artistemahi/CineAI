@@ -9,6 +9,7 @@ import MainComponent from "./MainComponent";
 import SecondaryComponent from "./SecondaryComponent";
 import {useSelector} from "react-redux"
 import GptSearch from "./GptSearch";
+import MovieModal from "./MovieModal";
 const Browse = () => {
   useNowPlayingMovie();
   usePopularMovies();
@@ -31,7 +32,7 @@ const Browse = () => {
       {showGptSearch ? <><GptSearch/></>:<><MainComponent/>
       <SecondaryComponent/></>}
       <div >
-      
+      <MovieModal />
        </div>
     </div>
   );
