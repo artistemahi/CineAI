@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Header from "./Header";
-import { Netflixbg } from "../utils/constants";
+import { CineAIbg } from "../utils/constants";
 import Form from "./Form";
 
 const LandingPage = () => {
@@ -15,8 +15,8 @@ const LandingPage = () => {
       <Header signinHandler={signinHandler} />
 
       <img
-        src={Netflixbg}
-        alt="netflixBg"
+        src={CineAIbg}
+        alt="CineAIBg"
         className="h-full w-full object-cover"
       />
 

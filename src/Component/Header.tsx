@@ -1,8 +1,4 @@
-import {
-  NetflixLogo,
-  NetflixUserbg,
-  SupportedLanguages,
-} from "../utils/constants";
+import { SupportedLanguages } from "../utils/constants";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { onAuthStateChanged } from "firebase/auth";
@@ -11,11 +7,21 @@ import { addUser, removeUser } from "../Slices/UserSlice";
 import { togglerGptSearchView } from "../Slices/GptSlice";
 import { auth } from "../utils/firebase";
 import { changeLanguage } from "../Slices/configSlice";
+import CineAILogo from "../utils/CineAI.png";
 
 const Header = ({ signinHandler }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((store: any) => store.user);
+  const userName = user?.name || "";
+
+  const UserLetter = userName
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+
   const isLoggedIn = !!user;
 
   const [IsGPT, setIsGPT] = useState(false);
@@ -49,9 +55,9 @@ const Header = ({ signinHandler }) => {
     <header className="fixed top-0 left-0 z-50 w-full bg-gradient-to-b from-black px-4 sm:px-8 py-3 flex flex-col sm:flex-row justify-between items-center">
       <Link to="/">
         <img
-          className="w-24 sm:w-36 cursor-pointer py-1"
-          src={NetflixLogo}
-          alt="netflix-logo"
+          className="w-24 sm:w-56 cursor-pointer py-1"
+          src={CineAILogo}
+          alt="CineAI-logo"
         />
       </Link>
 
@@ -86,12 +92,22 @@ const Header = ({ signinHandler }) => {
             {IsGPT ? "Home" : "GPT Search"}
           </button>
 
-          <img
-            src={NetflixUserbg}
-            alt="netflixUserBg"
-            className="w-8 h-8 rounded-full"
-          />
-
+          <div
+            className="
+w-10 h-10
+rounded-full
+bg-gradient-to-r
+from-red-500
+to-purple-600
+flex justify-center
+items-center
+font-bold
+text-white
+shadow-lg
+"
+          >
+            {UserLetter}
+          </div>
           <button
             onClick={signinHandler}
             className="rounded-md bg-red-600 px-4 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-white font-semibold hover:bg-red-700 transition"

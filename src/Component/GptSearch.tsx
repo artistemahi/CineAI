@@ -1,4 +1,4 @@
-import { Netflixbg } from "../utils/constants";
+import { CineAIbg } from "../utils/constants";
 import GptMovieSuggestions from "./GptMovieSuggestions";
 import GptSearchBar from "./GptSearchBar";
 
@@ -9,8 +9,8 @@ const GptSearch = () => {
         {" "}
         {/* Background image */}
         <img
-          src={Netflixbg}
-          alt="netflixBg"
+          src={CineAIbg}
+          alt="CineAIBg"
           className="h-full w-full object-cover"
         />
       </div>

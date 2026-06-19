@@ -81,10 +81,7 @@ const Form = () => {
       {!isSignUpMode ? (
         <h2 className="text-2xl sm:text-3xl font-bold mb-6">Sign In</h2>
       ) : (
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6"
->
-          Sign Up
-        </h2>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Sign Up</h2>
       )}
       {isSignUpMode && (
         <input
@@ -92,7 +89,6 @@ const Form = () => {
           type="text"
           placeholder="Name"
           className="w-full mb-4 rounded bg-zinc-800 px-4 py-2.5 sm:py-3 text-sm sm:text-base placeholder-gray-400 outline-none focus:ring-1 focus:ring-white"
-
         />
       )}
       {/* email */}
@@ -100,8 +96,7 @@ const Form = () => {
         ref={email}
         type="email"
         placeholder="Email address"
-          className="w-full mb-4 rounded bg-zinc-800 px-4 py-2.5 sm:py-3 text-sm sm:text-base placeholder-gray-400 outline-none focus:ring-1 focus:ring-white"
-
+        className="w-full mb-4 rounded bg-zinc-800 px-4 py-2.5 sm:py-3 text-sm sm:text-base placeholder-gray-400 outline-none focus:ring-1 focus:ring-white"
       />
 
       {/* password */}
@@ -109,15 +104,13 @@ const Form = () => {
         ref={password}
         type="password"
         placeholder="Password"
-          className="w-full mb-4 rounded bg-zinc-800 px-4 py-2.5 sm:py-3 text-sm sm:text-base placeholder-gray-400 outline-none focus:ring-1 focus:ring-white"
-        
+        className="w-full mb-4 rounded bg-zinc-800 px-4 py-2.5 sm:py-3 text-sm sm:text-base placeholder-gray-400 outline-none focus:ring-1 focus:ring-white"
       />
 
       {/* sign In button */}
       <button
         onClick={submitbtnCLickHandler}
         className="w-full rounded bg-red-600 py-2.5 sm:py-3 text-sm sm:text-base font-bold hover:bg-red-700 transition"
-
       >
         {!isSignUpMode ? "Sign In" : "Sign Up"}
       </button>
@@ -137,7 +130,7 @@ const Form = () => {
       </p>
 
       <p className="mt-6 text-sm text-gray-400">
-        New to Netflix?{" "}
+        New to CineAI?{" "}
         <button
           onClick={signupCLickHandler}
           className="cursor-pointer text-white hover:underline"
