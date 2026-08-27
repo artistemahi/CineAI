@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import lang from "../utils/Lang";
-import { useRef } from "react";
 import { API_option } from "../utils/constants";
 import { addGptMovieResult } from "../Slices/GptSlice";
 
@@ -12,48 +11,44 @@ const GptSearchBar = () => {
   const dispatch = useDispatch();
 
   const searchMovieTMDB = async (movie: string) => {
-    const data = await fetch(
+    const response = await fetch(
       "https://api.themoviedb.org/3/search/movie?query=" +
-        movie +
+        encodeURIComponent(movie) +
         "&include_adult=false&page=1",
       API_option,
     );
-    const json = await data.json();
-    return json.results;
+
+    if (!response.ok) {
+      throw new Error(`TMDB search failed: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data?.results ?? [];
   };
 
   const callGroq = async (query: string) => {
-    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    const response = await fetch("/api/groq", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_GROQ_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: [
-          {
-            role: "user",
-            content: query,
-          },
-        ],
-        temperature: 0.3,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
-    console.log(data);
-
-    return data?.choices?.[0]?.message?.content;
-  };
-  const handleGPTsearch = async () => {
-    const userQuery = searchtext.current?.value;
-    if(!userQuery){
-      window.alert("Please enter search value!")
+    if (!response.ok) {
+      throw new Error(data?.error || "Groq request failed");
     }
- 
-    if (!userQuery?.trim()) return;
+
+    return data?.content || "";
+  };
+
+  const handleGPTsearch = async () => {
+    const userQuery = searchtext.current?.value?.trim();
+
+    if (!userQuery) {
+      window.alert("Please enter search value!");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -61,9 +56,10 @@ const GptSearchBar = () => {
       const gptQuery = `
 Return exactly 5 movie names related to "${userQuery}".
 
-Return only:
+Return only one comma-separated line:
 Movie1, Movie2, Movie3, Movie4, Movie5
 
+No numbering.
 No explanation.
 No reasoning.
 No extra text.
@@ -71,24 +67,20 @@ No extra text.
 
       const aiText = await callGroq(gptQuery);
 
-      console.log("GROQ RESPONSE:", aiText);
-
-      if (!aiText) {
-        alert("No response received");
-        return;
-      }
-
       const gptMovies = aiText
+        .replace(/\n/g, ",")
         .split(",")
-        .map((movie) => movie.trim())
+        .map((movie) => movie.replace(/^\s*[-*\d.)]+\s*/, "").trim())
         .filter(Boolean)
         .slice(0, 5);
 
-      console.log("Movies:", gptMovies);
+      if (gptMovies.length === 0) {
+        throw new Error("Groq returned no movie names");
+      }
 
-      const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
-
-      const tmdbResults = await Promise.all(promiseArray);
+      const tmdbResults = await Promise.all(
+        gptMovies.map((movie) => searchMovieTMDB(movie)),
+      );
 
       dispatch(
         addGptMovieResult({
@@ -97,8 +89,12 @@ No extra text.
         }),
       );
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      console.error("GPT Search failed:", error);
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong with GPT Search",
+      );
     } finally {
       setLoading(false);
     }
@@ -109,7 +105,10 @@ No extra text.
   return (
     <div className="pt-[40%] sm:pt-[25%] md:pt-[10%] flex justify-center">
       <form
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleGPTsearch();
+        }}
         className="w-[90%] sm:w-[70%] md:w-1/2 m-4 p-4 sm:p-6 bg-black/80 grid grid-cols-12 rounded-md"
       >
         <input
@@ -119,15 +118,13 @@ No extra text.
           placeholder={lang[langkey]?.gptSearchPlaceholder}
         />
         <button
-          type="button"
+          type="submit"
           disabled={loading}
-          onClick={handleGPTsearch}
-          className={`
-    col-span-3 mx-2 py-2 text-sm sm:text-base font-bold text-white rounded-sm
-    ${
-      loading ? "bg-gray-500 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"
-    }
-  `}
+          className={`col-span-3 mx-2 py-2 text-sm sm:text-base font-bold text-white rounded-sm ${
+            loading
+              ? "bg-gray-500 cursor-not-allowed"
+              : "bg-red-600 hover:bg-red-700"
+          }`}
         >
           {loading ? "Finding Movies..." : "🔍 Search"}
         </button>
