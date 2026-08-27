@@ -3,11 +3,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.GROQ_API_KEY || process.env.REACT_APP_GROQ_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
 
   if (!apiKey) {
     return res.status(500).json({
-      error: "Groq API key is not configured on the server.",
+      error: "GROQ_API_KEY is not configured on the server.",
     });
   }
 
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "llama-3.3-70b-versatile",
+          model: "openai/gpt-oss-120b",
           messages: [{ role: "user", content: query }],
           temperature: 0.3,
           max_tokens: 200,
