@@ -3,11 +3,15 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.GROQ_API_KEY;
+  // Prefer the server-only variable. The REACT_APP fallback keeps existing
+  // CineAI deployments working if they already have the old variable set.
+  const apiKey =
+    process.env.GROQ_API_KEY || process.env.REACT_APP_GROQ_KEY;
 
   if (!apiKey) {
     return res.status(500).json({
-      error: "GROQ_API_KEY is not configured on the server.",
+      error:
+        "Groq API key is not configured. Add GROQ_API_KEY in Vercel Environment Variables.",
     });
   }
 
